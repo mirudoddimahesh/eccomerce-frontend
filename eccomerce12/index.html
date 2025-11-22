@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini E-Commerce</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Mini E-Commerce Store</h1>
+    <a href="cart.html">Cart</a> | <a href="login.html">Login</a>
+</header>
+
+<div class="container">
+    <h2>Products</h2>
+    <input type="text" id="search" placeholder="Search by name or category">
+    <input type="number" id="minPrice" placeholder="Min Price">
+    <input type="number" id="maxPrice" placeholder="Max Price">
+    <input type="number" id="minRating" placeholder="Min Rating">
+    <input type="number" id="maxRating" placeholder="Max Rating">
+    <select id="sortBy">
+        <option value="">Sort By</option>
+        <option value="price_asc">Price Low to High</option>
+        <option value="price_desc">Price High to Low</option>
+        <option value="rating">Rating</option>
+    </select>
+    <button onclick="loadProducts()">Filter</button>
+
+    <div id="products" style="margin-top:20px;"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+async function loadProducts() {
+    const filters = {
+        search: document.getElementById('search').value,
+        minPrice: document.getElementById('minPrice').value,
+        maxPrice: document.getElementById('maxPrice').value,
+        minRating: document.getElementById('minRating').value,
+        maxRating: document.getElementById('maxRating').value,
+        sortBy: document.getElementById('sortBy').value
+    };
+    const products = await getProducts(filters);
+    const container = document.getElementById('products');
+    container.innerHTML = '';
+    products.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${p.imageURL}" width="150"><br>
+            <b>${p.name}</b><br>
+            $${p.price} <br>
+            Rating: ${p.rating} <br>
+            <button onclick="addToCartPrompt(${p.id})">Add to Cart</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Temporary userId (for demo)
+const userId = 1;
+
+async function addToCartPrompt(productId) {
+    const res = await addToCart(userId, productId);
+    if(res.success) alert("Added to cart!");
+}
+
+window.onload = loadProducts;
+</script>
+</body>
+</html>

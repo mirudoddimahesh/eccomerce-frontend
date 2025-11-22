@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Cart</h1>
+    <a href="index.html">Home</a> | <a href="login.html">Login</a>
+</header>
+
+<div class="container">
+    <div id="cartItems"></div>
+    <h3>Total: $<span id="total">0</span></h3>
+    <button onclick="goToOrder()">Order Now</button>
+</div>
+
+<script src="script.js"></script>
+<script>
+const userId = 1; // demo user
+
+async function loadCart() {
+    const items = await getCart(userId);
+    const container = document.getElementById('cartItems');
+    container.innerHTML = '';
+    let total = 0;
+    items.forEach(item => {
+        total += item.price * item.quantity;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <img src="${item.imageURL}" width="100"><br>
+            <b>${item.name}</b><br>
+            $${item.price} x ${item.quantity}<br>
+            <button onclick="removeItem(${item.cartId})">Remove</button>
+        `;
+        container.appendChild(div);
+    });
+    document.getElementById('total').innerText = total.toFixed(2);
+}
+
+async function removeItem(cartId) {
+    await removeCartItem(cartId);
+    loadCart();
+}
+
+function goToOrder() {
+    window.location.href = "order.html";
+}
+
+window.onload = loadCart;
+</script>
+</body>
+</html>
